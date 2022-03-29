@@ -4,3 +4,189 @@
   margin: 0;
   padding: 0;
 }
+
+.wrapper {
+  min-height: 100vh;
+  min-width: 100vw;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background-color: beige;
+}
+
+.main {
+  flex: 1 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  margin-bottom: 100px;
+}
+
+.music-player {
+  position: relative;
+
+  display: flex;
+
+  padding: 27px 30px;
+
+  background-color: #fff;
+
+  border-radius: 15px;
+  box-shadow: 0 20px 20px 0 rgba(252, 169, 169, 0.6);
+}
+
+.music-player__audio-meta {
+}
+.audio-meta {
+  position: absolute;
+  top: -65px;
+  left: 10px;
+
+  transform: translateY(0%);
+
+  width: calc(100% - 20px);
+
+  padding: 15px 10px 10px 150px;
+
+  background-color: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+
+  border-radius: 10px 10px 0 0;
+
+  transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+}
+
+.music-player--play .audio-meta {
+  opacity: 1;
+}
+
+.audio-meta__title {
+}
+
+.audio-meta__progress-bar {
+  width: 100%;
+  height: 4px;
+
+  margin: 10px 0;
+
+  background: #fff;
+
+  border-radius: 5px;
+
+  cursor: pointer;
+}
+
+.audio-meta__progress-bar::after {
+  content: '';
+
+  display: block;
+
+  height: 100%;
+  width: 50%;
+
+  background-color: #fe8daa;
+
+  border-radius: 5px;
+
+  transition: width 0.1s linear;
+}
+
+.music-player__audio {
+}
+
+.music-player__audio-cover {
+  position: relative;
+
+  width: 110px;
+}
+
+.music-player__audio-cover::after {
+  content: '';
+
+  display: block;
+
+  position: absolute;
+
+  transform: translate(200%, -150%);
+
+  height: 22px;
+  width: 22px;
+
+  background-color: #fff;
+
+  border-radius: 50%;
+}
+
+.music-player__audio-cover img {
+  position: absolute;
+  bottom: 0;
+
+  max-width: 100%;
+  height: 110px;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+
+  animation: rotate 5s linear infinite;
+
+  animation-play-state: paused;
+}
+
+.music-player--play .music-player__audio-cover img {
+  animation-play-state: running;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.music-player__audio-controls {
+}
+
+.controls {
+  display: flex;
+  justify-content: space-around;
+  gap: 55px;
+
+  padding: 0 20px;
+}
+.control {
+  background-color: inherit;
+  color: #dfdbdf;
+
+  font-size: 1.25rem;
+
+  border-style: none;
+
+  cursor: pointer;
+}
+
+.control {
+  outline: none;
+}
+
+.control--big {
+  color: #cdc2d0;
+  font-size: 1.875rem;
+}
+
+.controls__next {
+}
+.controls__play {
+}
+.controls__previous {
+}
