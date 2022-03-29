@@ -47,12 +47,6 @@ body {
   box-shadow: 0 20px 20px 0 rgba(252, 169, 169, 0.6);
 }
 
-.music-player__audio-meta {
-  position: absolute;
-  top: 0;
-
-  transform: translateY(0%);
-}
 .audio-meta {
   width: calc(100% - 15px);
   height: 55px;
@@ -61,14 +55,24 @@ body {
 
   background-color: rgba(255, 255, 255, 0.5);
 
-  opacity: 0;
-
   border-radius: 15px 15px 0 0;
 
   transition: transform 0.3s ease-in, opacity 0.3s ease-in;
 }
-.music-player--on .audio-meta {
+.music-player__audio-meta {
+  position: absolute;
+  top: 0;
+
+  transform: translateY(0%);
+
+  z-index: -1;
+
+  opacity: 0;
+}
+.music-player--on .music-player__audio-meta {
   transform: translateY(-100%);
+
+  z-index: 0;
 
   opacity: 1;
 }
