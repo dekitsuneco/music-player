@@ -55,9 +55,6 @@ const songCover = document.querySelector('.audio-cover__disk img');
 
 // 2. Define constants:
 /**
- *@todo Define a song list as an array of their titles
- */
-/**
  * @type {Progress}
  */
 const progress = {
@@ -79,13 +76,18 @@ const widthScale = { min: 0, max: 100 };
 const durationScale = { min: 0, max: 60 };
 
 /**
- * @type {Array<string>}
+ * @type {Object}
+ * @property {Array<string>} list
+ * @property {number} indexOfCurrent
  */
-const songs = ['Pyrite', 'Pinesoot'];
+const songs = {
+  list: ['Pinesoot', 'Pyrite'],
+  indexOfCurrent: 0,
+};
 
-console.assert(songs instanceof Array, 'Song list is not array');
+console.assert(songs?.list instanceof Array, 'Song list is not array');
 console.assert(
-  songs.every((song) => typeof song === 'string'),
+  songs?.list.every((song) => typeof song === 'string'),
   'Song list is not array of strings',
 );
 
@@ -99,13 +101,71 @@ console.assert(
  *@todo Define a function to update the progress bar
  *@todo Define a function to update the progress bar on clicking
  */
-// changeCurrentSongTo(song): void
-// play(song): void
-// pause(song): void
 // toPreviosSong(): void
 // toNextSong(): void
 // updateProgress(e): void
 // updateProgressManually(e): void
+/**
+ *
+ * @param {String} song
+ * @returns {void}
+ */
+const changeCurrentSongTo = (song) => {
+  audioPanel.src = `../src/assets/audio/${song}.mp3`;
+  songCover.src = `../src/assets/img/${song}.jpg`;
+  songName.innerText = song;
+};
+
+/**
+ * @returns {void}
+ */
+const play = () => {
+  player.classList.add('music-player--on');
+  controls.play.querySelector('i.fas').classList.remove('fa-play');
+  controls.play.querySelector('i.fas').classList.add('fa-pause');
+
+  audioPanel.play();
+};
+
+/**
+ * @returns {void}
+ */
+const pause = () => {
+  player.classList.remove('music-player--on');
+  controls.play.querySelector('i.fas').classList.remove('fa-pause');
+  controls.play.querySelector('i.fas').classList.add('fa-play');
+
+  audioPanel.pause();
+};
+
+/**
+ * @returns {void}
+ */
+const toPrevSong = () => {
+  if (songs.indexOfCurrent === 0) {
+    songs.indexOfCurrent = songs.list.length - 1;
+  } else {
+    songs.indexOfCurrent--;
+  }
+
+  changeCurrentSongTo(songs.list[songs.indexOfCurrent]);
+  play();
+};
+
+/**
+ * @returns {void}
+ */
+const toNextSong = () => {
+  if (songs.indexOfCurrent === songs.list.length - 1) {
+    songs.indexOfCurrent = 0;
+  } else {
+    songs.indexOfCurrent++;
+  }
+
+  changeCurrentSongTo(songs.list[songs.indexOfCurrent]);
+  play();
+};
+
 /**
  * @param {Scale} fromRange
  * @param {Scale} toRange
@@ -137,3 +197,15 @@ console.assert(
  *@todo Set an event listener on nextbtn to change the song
  *@todo Set an event listener on prevbtn to change the song
  */
+controls.play.addEventListener('click', () => {
+  const isPlayerOn = player.classList.contains('music-player--on');
+
+  if (isPlayerOn) {
+    pause();
+  } else {
+    play();
+  }
+});
+
+controls.prev.addEventListener('click', toPrevSong);
+controls.next.addEventListener('click', toNextSong);
