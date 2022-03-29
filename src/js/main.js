@@ -1,14 +1,48 @@
 // @ts-check
 // 1. Cache the DOM:
 /**
- *@todo Cache the following elements:
- * - music-player
- * - all three controls
- * - audio itself
- * - progress bar
- * - audio title
- * - audio cover
+ * @typedef {Object} Controls
+ * @property {HTMLElement} prev
+ * @property {HTMLElement} play
+ * @property {HTMLElement} next
  */
+
+/**
+ * @type {HTMLElement}
+ */
+const player = document.querySelector('.music-player');
+
+/**
+ * @type {Controls}
+ */
+const controls = {
+  prev: document.querySelector('.controls__previous'),
+  play: document.querySelector('.controls__play'),
+  next: document.querySelector('.controls__next'),
+};
+
+/**
+ * @type {HTMLAudioElement}
+ */
+const audioPanel = document.querySelector('.music-player__audio');
+
+/**
+ * @type {HTMLElement}
+ */
+const progressBar = document.querySelector('.audio-meta__progress-bar');
+
+/**
+ * @type {HTMLElement}
+ */
+const songName = document.querySelector('.audio-meta__title');
+
+/**
+ * @type {HTMLImageElement}
+ */
+const songCover = document.querySelector('.audio-cover__disk img');
+
+
+
 
 // 2. Define constants:
 /**
