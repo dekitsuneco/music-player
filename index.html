@@ -15,16 +15,18 @@
 
   <body>
     <div class="wrapper">
-      <main class="main">
+      <main class="main" role="main">
         <h1 class="title">Music Player</h1>
-        <div class="music-player music-player--play">
+        <div class="music-player music-player--on">
           <div class="music-player__audio-meta audio-meta">
             <div class="audio-meta__title">Monster</div>
             <div class="audio-meta__progress-bar"></div>
           </div>
           <audio src="./src/assets/audio/audio1.mp3" class="music-player__audio"></audio>
-          <div class="music-player__audio-cover">
-            <img src="./src/assets/img/pyrite.jpg" alt="">
+          <div class="music-player__audio-cover audio-cover">
+            <div class="audio-cover__disk">
+              <img src="./src/assets/img/pyrite.jpg" alt="">
+            </div>
           </div>
           <div class="music-player__audio-controls controls">
             <button class="controls__previous control">
