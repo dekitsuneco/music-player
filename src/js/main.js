@@ -174,14 +174,10 @@ const updateProgress = ({ target: { duration, currentTime } }) => {
     /**
      * @type {Number}
      */
-    const current = mapNumBetweenRanges(
-      durationScale,
-      percentageScale,
-      currentTime,
-    );
+    const current = mapNumBetweenRanges(durationScale, percentageScale, currentTime) || 0;
 
     document.documentElement.style.setProperty(
-      '--strength',
+      '--progress',
       `${Math.round(current)}%`,
     );
   });
