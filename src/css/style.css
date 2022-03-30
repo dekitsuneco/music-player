@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
 :root {
   --strength: 0%;
 }
@@ -10,7 +12,7 @@
 }
 
 body {
-  font-family: serif;
+  font-family: 'Lato', sans-serif;
 
   background-color: rgb(42, 42, 42);
   background-image: url('../assets/img/bgi.jpg');
