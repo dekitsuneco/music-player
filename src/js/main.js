@@ -36,7 +36,7 @@ const controls = {
 /**
  * @type {HTMLAudioElement}
  */
-const audioPanel = document.querySelector('.music-player__audio');
+const audio = document.querySelector('.music-player__audio');
 
 /**
  * @type {HTMLElement}
@@ -80,29 +80,24 @@ const durationScale = { min: 0, max: 60 };
  * @property {Array<string>} list
  * @property {number} indexOfCurrent
  */
-const songs = {
-  list: ['Pinesoot', 'Pyrite'],
+const playlist = {
+  all: ['Pinesoot', 'Pyrite'],
   indexOfCurrent: 0,
 };
 
-console.assert(songs?.list instanceof Array, 'Song list is not array');
+console.assert(playlist?.all instanceof Array, 'Song list is not array');
 console.assert(
-  songs?.list.every((song) => typeof song === 'string'),
+  playlist?.all.every((song) => typeof song === 'string'),
   'Song list is not array of strings',
 );
 
 // 3. Define functions:
 /**
- *@todo Define a function for song loading (update song src, cover, title)
- *@todo Define a function to play song
- *@todo Define a function to pause song
  *@todo Define a function to map the range of a song duration to a scale of 100
  *@todo Define a function to map the range of the bar width to a song duration
  *@todo Define a function to update the progress bar
  *@todo Define a function to update the progress bar on clicking
  */
-// toPreviosSong(): void
-// toNextSong(): void
 // updateProgress(e): void
 // updateProgressManually(e): void
 /**
@@ -111,44 +106,105 @@ console.assert(
  * @returns {void}
  */
 const changeCurrentSongTo = (song) => {
-  audioPanel.src = `../src/assets/audio/${song}.mp3`;
-  songCover.src = `../src/assets/img/${song}.jpg`;
+  const pathToDir = `../src/assets/playlist/${song}`;
+
+  audio.src = `${pathToDir}/${song}.mp3`;
+  songCover.src = `${pathToDir}/${song}.jpg`;
   songName.innerText = song;
+};
+
+/**
+ * @param {String} status
+ * @returns {void}
+ */
+const changePlayControlStatusTo = (status) => {
+  /**
+   * @type {Boolean}
+   */
+  let isPlayerOn;
+
+  switch (status) {
+    case 'play':
+      if (!player.classList.contains('music-player--on')) {
+        player.classList.add('music-player--on');
+      }
+
+      isPlayerOn = true;
+      break;
+
+    case 'pause':
+      if (player.classList.contains('music-player--on')) {
+        player.classList.remove('music-player--on');
+      }
+
+      isPlayerOn = false;
+      break;
+
+    default:
+      break;
+  }
+
+  if (isPlayerOn) {
+    controls.play.querySelector('i.fas').classList.remove('fa-play');
+    controls.play.querySelector('i.fas').classList.add('fa-pause');
+  } else {
+    controls.play.querySelector('i.fas').classList.remove('fa-pause');
+    controls.play.querySelector('i.fas').classList.add('fa-play');
+  }
 };
 
 /**
  * @returns {void}
  */
 const play = () => {
-  player.classList.add('music-player--on');
-  controls.play.querySelector('i.fas').classList.remove('fa-play');
-  controls.play.querySelector('i.fas').classList.add('fa-pause');
+  changePlayControlStatusTo('play');
 
-  audioPanel.play();
+  audio.play();
 };
 
 /**
  * @returns {void}
  */
 const pause = () => {
-  player.classList.remove('music-player--on');
-  controls.play.querySelector('i.fas').classList.remove('fa-pause');
-  controls.play.querySelector('i.fas').classList.add('fa-play');
+  changePlayControlStatusTo('pause');
 
-  audioPanel.pause();
+  audio.pause();
+};
+
+/**
+ * @param {String} direction
+ * @returns {void}
+ */
+const moveIndexOfCurrentTo = (direction) => {
+  switch (direction) {
+    case 'forward':
+      if (playlist.indexOfCurrent === playlist.all.length - 1) {
+        playlist.indexOfCurrent = 0;
+      } else {
+        playlist.indexOfCurrent++;
+      }
+      break;
+
+    case 'back':
+      if (playlist.indexOfCurrent === 0) {
+        playlist.indexOfCurrent = playlist.all.length - 1;
+      } else {
+        playlist.indexOfCurrent--;
+      }
+      break;
+
+    default:
+      break;
+  }
 };
 
 /**
  * @returns {void}
  */
 const toPrevSong = () => {
-  if (songs.indexOfCurrent === 0) {
-    songs.indexOfCurrent = songs.list.length - 1;
-  } else {
-    songs.indexOfCurrent--;
-  }
+  moveIndexOfCurrentTo('back');
 
-  changeCurrentSongTo(songs.list[songs.indexOfCurrent]);
+  changeCurrentSongTo(playlist.all[playlist.indexOfCurrent]);
   play();
 };
 
@@ -156,13 +212,9 @@ const toPrevSong = () => {
  * @returns {void}
  */
 const toNextSong = () => {
-  if (songs.indexOfCurrent === songs.list.length - 1) {
-    songs.indexOfCurrent = 0;
-  } else {
-    songs.indexOfCurrent++;
-  }
+  moveIndexOfCurrentTo('forward');
 
-  changeCurrentSongTo(songs.list[songs.indexOfCurrent]);
+  changeCurrentSongTo(playlist.all[playlist.indexOfCurrent]);
   play();
 };
 
@@ -192,12 +244,10 @@ console.assert(
 );
 
 // 4. Set event listeners:
-/**
- *@todo Set an event listener on playbtn (toggle player class, and call play/pause song function)
- *@todo Set an event listener on nextbtn to change the song
- *@todo Set an event listener on prevbtn to change the song
- */
 controls.play.addEventListener('click', () => {
+  /**
+   * @type {Boolean}
+   */
   const isPlayerOn = player.classList.contains('music-player--on');
 
   if (isPlayerOn) {
