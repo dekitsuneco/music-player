@@ -5,10 +5,6 @@
 import { audio, player } from './dom.js';
 import mapNumBetweenRanges from './helpers/mapRange.js';
 
-/**
- * @todo Move range mapping into separate file as a module
- */
-
 // |@ 2. Define constants:
 /**
  * @constant {Object}
@@ -143,27 +139,29 @@ const skipTo = (direction) => {
  * @returns {void}
  */
 const updateProgress = ({ target: { duration, currentTime } }) => {
-  /**
-   * @type {import('./helpers/mapRange.js').Scale}
-   */
-  const durationScale = {
-    min: 0,
-    max: duration,
-  };
+  requestAnimationFrame(() => {
+    /**
+     * @type {import('./helpers/mapRange.js').Scale}
+     */
+    const durationScale = {
+      min: 0,
+      max: duration,
+    };
 
-  /**
-   * @type {Number}
-   */
-  const current = mapNumBetweenRanges(
-    durationScale,
-    percentageScale,
-    currentTime,
-  );
+    /**
+     * @type {Number}
+     */
+    const current = mapNumBetweenRanges(
+      durationScale,
+      percentageScale,
+      currentTime,
+    );
 
-  document.documentElement.style.setProperty(
-    '--strength',
-    `${Math.round(current)}%`,
-  );
+    document.documentElement.style.setProperty(
+      '--strength',
+      `${Math.round(current)}%`,
+    );
+  });
 };
 
 /**
@@ -171,29 +169,31 @@ const updateProgress = ({ target: { duration, currentTime } }) => {
  * @returns {void}
  */
 const setProgress = (e) => {
-  /**
-   * @type {import('./helpers/mapRange.js').Scale}
-   */
-  const durationScale = {
-    min: 0,
-    max: audio.source.duration,
-  };
+  requestAnimationFrame(() => {
+    /**
+     * @type {import('./helpers/mapRange.js').Scale}
+     */
+    const durationScale = {
+      min: 0,
+      max: audio.source.duration,
+    };
 
-  /**
-   * @type {Number}
-   */
-  const clickedPostiion = e.offsetX;
+    /**
+     * @type {Number}
+     */
+    const clickedPostiion = e.offsetX;
 
-  /**
-   * @type {Number}
-   */
-  const currentProgress = mapNumBetweenRanges(
-    progressWidthScale,
-    durationScale,
-    clickedPostiion,
-  );
+    /**
+     * @type {Number}
+     */
+    const currentProgress = mapNumBetweenRanges(
+      progressWidthScale,
+      durationScale,
+      clickedPostiion,
+    );
 
-  audio.source.currentTime = currentProgress;
+    audio.source.currentTime = currentProgress;
+  });
 };
 
 /**
@@ -201,22 +201,24 @@ const setProgress = (e) => {
  * @returns {void}
  */
 const setVolume = (e) => {
-  /**
-   * @type {Number}
-   */
-  const clickedPostiion = e.offsetX;
+  requestAnimationFrame(() => {
+    /**
+     * @type {Number}
+     */
+    const clickedPostiion = e.offsetX;
 
-  /**
-   * @type {Number}
-   */
-  const currentVolume = mapNumBetweenRanges(
-    volumeWidthScale,
-    percentageScale,
-    clickedPostiion,
-  );
+    /**
+     * @type {Number}
+     */
+    const currentVolume = mapNumBetweenRanges(
+      volumeWidthScale,
+      percentageScale,
+      clickedPostiion,
+    );
 
-  player.volumeBar.value = currentVolume;
-  player.changeVolume();
+    player.volumeBar.value = currentVolume;
+    player.changeVolume();
+  });
 };
 
 // |@ 4. Set default actions and event listeners:
