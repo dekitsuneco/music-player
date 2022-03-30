@@ -1,84 +1,13 @@
+/* eslint-disable import/extensions */
 // @ts-check
 
+// |@ 1. Cache the DOM:
+import { audio, player } from './dom.js';
+import mapNumBetweenRanges from './helpers/mapRange.js';
+
 /**
- * @todo Make default song be set from javascript
- * @todo Move DOM caching into separate file
  * @todo Move range mapping into separate file as a module
  */
-
-// |@ 1. Cache the DOM:
-/**
- * @typedef {Object} Controls
- * @property {HTMLElement} prev
- * @property {HTMLElement} play
- * @property {HTMLElement} next
- */
-/**
- * @typedef {Object} Progress
- * @property {number} min
- * @property {number} current
- * @property {number} max
- */
-/**
- * @typedef {Object} Scale
- * @property {number} min
- * @property {number} max
- */
-
-/**
- * @type {Object}
- * @param {HTMLAudioElement} source
- * @param {HTMLElement} source
- * @param {HTMLImageElement} source
- */
-const audio = {
-  source: document.querySelector('.music-player__audio'),
-  title: document.querySelector('.audio-meta__title'),
-  cover: document.querySelector('.audio-cover__disk img'),
-};
-
-/**
- * @type {Object}
- * @param {HTMLElement} container
- * @param {Object} container
- * @param {Controls} controls
- * @param {HTMLElement} durationBar
- * @param {HTMLMeterElement} volumeBar
- * @param {Function} changeVolume
- * @param {Boolean} isOn
- * @param {Function} changeStatus
- */
-const player = {
-  container: document.querySelector('.music-player'),
-  controls: {
-    prev: document.querySelector('.controls__previous'),
-    play: document.querySelector('.controls__play'),
-    next: document.querySelector('.controls__next'),
-  },
-  durationBar: document.querySelector('.audio-meta__progress-bar'),
-  volumeBar: document.querySelector('.music-player__audio-volume'),
-  changeVolume() {
-    audio.source.volume = this.volumeBar.value / 100;
-  },
-  isOn: false,
-  changeStatus() {
-    this.isOn = !this.isOn;
-    this.container.classList.toggle('music-player--on');
-
-    /**
-     * @type {HTMLElement}
-     */
-    const toggleButtonIcon = this.controls.play.querySelector('i.fas');
-
-    if (this.isOn) {
-      toggleButtonIcon.classList.remove('fa-play');
-      toggleButtonIcon.classList.add('fa-pause');
-    } else {
-      toggleButtonIcon.classList.remove('fa-pause');
-      toggleButtonIcon.classList.add('fa-play');
-    }
-  },
-};
 
 // |@ 2. Define constants:
 /**
@@ -92,7 +21,7 @@ const DIRECTION = {
 };
 
 /**
- * @type {Scale}
+ * @type {import('./helpers/mapRange.js').Scale}
  */
 const progressWidthScale = {
   min: 0,
@@ -100,12 +29,12 @@ const progressWidthScale = {
 };
 
 /**
- * @type {Scale}
+ * @type {import('./helpers/mapRange.js').Scale}
  */
 const percentageScale = { min: 0, max: 100 };
 
 /**
- * @type {Scale}
+ * @type {import('./helpers/mapRange.js').Scale}
  */
 const volumeWidthScale = {
   min: 0,
@@ -209,34 +138,13 @@ const skipTo = (direction) => {
 };
 
 /**
- * @param {Scale} fromRange
- * @param {Scale} toRange
- * @param {number} num
- * @returns {number}
- */
-const mapNumBetweenRanges = (fromRange, toRange, num) => {
-  /**
-   * @type {number}
-   */
-  const sizeOfToRange = toRange.max - toRange.min;
-  /**
-   * @type {number}
-   */
-  const sizeOfFromRange = fromRange.max - fromRange.min;
-
-  return (
-    toRange.min + (sizeOfToRange / sizeOfFromRange) * (num - fromRange.min)
-  );
-};
-
-/**
  * @param {Object} e
  * @param {HTMLAudioElement} e.target
  * @returns {void}
  */
 const updateProgress = ({ target: { duration, currentTime } }) => {
   /**
-   * @type {Scale}
+   * @type {import('./helpers/mapRange.js').Scale}
    */
   const durationScale = {
     min: 0,
@@ -264,7 +172,7 @@ const updateProgress = ({ target: { duration, currentTime } }) => {
  */
 const setProgress = (e) => {
   /**
-   * @type {Scale}
+   * @type {import('./helpers/mapRange.js').Scale}
    */
   const durationScale = {
     min: 0,
