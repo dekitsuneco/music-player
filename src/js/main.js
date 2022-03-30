@@ -1,6 +1,13 @@
 // @ts-check
 
-// 1. Cache the DOM:
+/**
+ * @todo Normalize song names on display
+ * @todo Make default song be set from javascript
+ * @todo Move DOM caching into separate file
+ * @todo Move range mapping into separate file as a module
+ */
+
+// |@ 1. Cache the DOM:
 /**
  * @typedef {Object} Controls
  * @property {HTMLElement} prev
@@ -74,7 +81,7 @@ const player = {
   },
 };
 
-// 2. Define constants:
+// |@ 2. Define constants:
 /**
  * @constant {Object}
  * @param {String} NEXT
@@ -85,7 +92,6 @@ const DIRECTION = {
   PREV: 'prev',
 };
 
-// TODO
 /**
  * @type {Scale}
  */
@@ -127,7 +133,7 @@ const playlist = {
   indexOfCurrent: 0,
 };
 
-// 3. Define functions:
+// |@ 3. Define functions:
 /**
  * @param {String} song
  * @returns {void}
@@ -140,7 +146,7 @@ const changeAudioTo = (song) => {
 
   audio.source.src = `${pathToDir}/${song}.mp3`;
   audio.cover.src = `${pathToDir}/${song}.jpg`;
-  audio.title.innerText = song;
+  audio.title.innerText = song.replace(/_/g, ' ');
 };
 
 /**
@@ -306,7 +312,7 @@ const setVolume = (e) => {
   player.changeVolume();
 };
 
-// 4. Set event listeners:
+// |@ 4. Set default actions and event listeners:
 player.controls.play.addEventListener('click', () => {
   if (player.isOn) {
     pause();
