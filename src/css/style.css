@@ -156,9 +156,6 @@ body {
   }
 }
 
-.music-player__audio-controls {
-}
-
 .controls {
   display: flex;
   justify-content: space-around;
@@ -184,11 +181,4 @@ body {
   color: #cdc2d0;
 
   font-size: 1.875rem;
-}
-
-.controls__next {
-}
-.controls__play {
-}
-.controls__previous {
 }
