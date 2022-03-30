@@ -66,11 +66,34 @@ const changeAudioTo = (song) => {
   /**
    * @type {String}
    */
-  const pathToDir = `../src/assets/playlist/${song}`;
+  const pathToDir = ['.', 'src', 'assets', 'playlist', song].join('/');
 
-  audio.source.src = `${pathToDir}/${song}.mp3`;
-  audio.cover.src = `${pathToDir}/${song}.jpg`;
-  audio.title.innerText = song.replace(/_/g, ' ');
+  /**
+   * @type {Promise}
+   */
+  const loadAudio = new Promise((resolve) => {
+    audio.source.src = `${pathToDir}/${song}.mp3`;
+    audio.source.oncanplay = () => {
+      resolve();
+    };
+  });
+
+  /**
+   * @type {Promise}
+   */
+  const loadImage = new Promise((resolve) => {
+    audio.cover.src = `${pathToDir}/${song}.jpg`;
+    audio.cover.onload = () => {
+      resolve();
+    };
+  });
+
+  /**
+   * @type {Promise}
+   */
+  Promise.all([loadAudio, loadImage]).then(() => {
+    audio.title.innerText = song.replace(/_/g, ' ');
+  });
 };
 
 /**
