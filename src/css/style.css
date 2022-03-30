@@ -12,7 +12,23 @@
 body {
   font-family: serif;
 
-  background-color: beige;
+  background-color: rgb(42, 42, 42);
+  background-image: url('../assets/img/bgi.jpg');
+  background-size: contain;
+  background-repeat: space;
+}
+
+@media (max-width: 945px) {
+  body {
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
+
+@media (max-width: 475px) {
+  body {
+    background-size: cover;
+  }
 }
 
 .wrapper {
@@ -35,6 +51,8 @@ body {
 
 .title {
   margin-bottom: 100px;
+
+  color: beige;
 }
 
 .music-player {
