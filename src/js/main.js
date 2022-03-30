@@ -100,21 +100,18 @@ const changeAudioTo = (song) => {
  * @returns {void}
  */
 const play = () => {
-  if (!player.isOn) {
-    player.changeStatus();
-  }
-
-  audio.source.play();
+  audio.source.play()
+    .catch((err) => {
+      if (!err.message.includes('The play() request was interrupted by a new load request')) {
+        audio.source.pause();
+      }
+    });
 };
 
 /**
  * @returns {void}
  */
 const pause = () => {
-  if (player.isOn) {
-    player.changeStatus();
-  }
-
   audio.source.pause();
 };
 
@@ -242,6 +239,28 @@ const setVolume = (e) => {
 
 // |@ 4. Set default actions and event listeners:
 changeAudioTo(playlist.all[playlist.indexOfCurrent]);
+
+audio.source.onplaying = () => {
+  player.isOn = !audio.source.paused;
+
+  if (player.isOn) {
+    player.container.classList.add('music-player--on');
+
+    player.toggleButtonIcon.classList.remove('fa-play');
+    player.toggleButtonIcon.classList.add('fa-pause');
+  }
+};
+
+audio.source.onpause = () => {
+  player.isOn = !audio.source.paused;
+
+  if (!player.isOn) {
+    player.container.classList.remove('music-player--on');
+
+    player.toggleButtonIcon.classList.remove('fa-pause');
+    player.toggleButtonIcon.classList.add('fa-play');
+  }
+};
 
 player.controls.play.addEventListener('click', () => {
   if (player.isOn) {

@@ -20,44 +20,28 @@ export const audio = {
 };
 
 /**
- * @type {Object}
+ * @type {Object} player
+ * @param {Boolean} isOn
  * @param {HTMLElement} container
  * @param {Object} container
  * @param {Controls} controls
+ * @param {HTMLElement} toggleButtonIcon
  * @param {HTMLElement} durationBar
  * @param {HTMLMeterElement} volumeBar
  * @param {Function} changeVolume
- * @param {Boolean} isOn
- * @param {Function} changeStatus
  */
 export const player = {
+  isOn: false,
   container: document.querySelector('.music-player'),
   controls: {
     prev: document.querySelector('.controls__previous'),
     play: document.querySelector('.controls__play'),
     next: document.querySelector('.controls__next'),
   },
+  toggleButtonIcon: document.querySelector('.controls__play i.fas'),
   durationBar: document.querySelector('.audio-meta__progress-bar'),
   volumeBar: document.querySelector('.music-player__audio-volume'),
   changeVolume() {
     audio.source.volume = this.volumeBar.value / 100;
-  },
-  isOn: false,
-  changeStatus() {
-    this.isOn = !this.isOn;
-    this.container.classList.toggle('music-player--on');
-
-    /**
-     * @type {HTMLElement}
-     */
-    const toggleButtonIcon = this.controls.play.querySelector('i.fas');
-
-    if (this.isOn) {
-      toggleButtonIcon.classList.remove('fa-play');
-      toggleButtonIcon.classList.add('fa-pause');
-    } else {
-      toggleButtonIcon.classList.remove('fa-pause');
-      toggleButtonIcon.classList.add('fa-play');
-    }
   },
 };
