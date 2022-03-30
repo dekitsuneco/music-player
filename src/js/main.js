@@ -36,7 +36,8 @@ const audio = {
  * @param {HTMLElement} container
  * @param {Object} container
  * @param {Controls} controls
- * @param {HTMLMeterElement} volume
+ * @param {HTMLElement} durationBar
+ * @param {HTMLMeterElement} volumeBar
  * @param {Function} changeVolume
  * @param {Boolean} isOn
  * @param {Function} changeStatus
@@ -48,9 +49,10 @@ const player = {
     play: document.querySelector('.controls__play'),
     next: document.querySelector('.controls__next'),
   },
-  volume: document.querySelector('.music-player__audio-volume'),
+  durationBar: document.querySelector('.audio-meta__progress-bar'),
+  volumeBar: document.querySelector('.music-player__audio-volume'),
   changeVolume() {
-    audio.source.volume = this.volume.value / 100;
+    audio.source.volume = this.volumeBar.value / 100;
   },
   isOn: false,
   changeStatus() {
@@ -87,7 +89,10 @@ const DIRECTION = {
 /**
  * @type {Scale}
  */
-const widthScale = { min: 0, max: 100 };
+const progressWidthScale = {
+  min: 0,
+  max: player.durationBar.clientWidth,
+};
 
 /**
  * @type {Scale}
@@ -99,7 +104,7 @@ const percentageScale = { min: 0, max: 100 };
  */
 const volumeWidthScale = {
   min: 0,
-  max: player.volume.clientWidth,
+  max: player.volumeBar.clientWidth,
 };
 
 /**
@@ -123,12 +128,6 @@ const playlist = {
 };
 
 // 3. Define functions:
-/**
- *@todo Define a function to map the range of the bar width to a song duration
- *@todo Define a function to update the progress bar on clicking
- *@todo Define a function to control volume
- */
-// updateProgressManually(e): void
 /**
  * @param {String} song
  * @returns {void}
@@ -258,6 +257,36 @@ const updateProgress = ({ target: { duration, currentTime } }) => {
  * @param {PointerEvent} e
  * @returns {void}
  */
+const setProgress = (e) => {
+  /**
+   * @type {Scale}
+   */
+  const durationScale = {
+    min: 0,
+    max: audio.source.duration,
+  };
+
+  /**
+   * @type {Number}
+   */
+  const clickedPostiion = e.offsetX;
+
+  /**
+   * @type {Number}
+   */
+  const currentProgress = mapNumBetweenRanges(
+    progressWidthScale,
+    durationScale,
+    clickedPostiion,
+  );
+
+  audio.source.currentTime = currentProgress;
+};
+
+/**
+ * @param {PointerEvent} e
+ * @returns {void}
+ */
 const setVolume = (e) => {
   /**
    * @type {Number}
@@ -273,7 +302,7 @@ const setVolume = (e) => {
     clickedPostiion,
   );
 
-  player.volume.value = currentVolume;
+  player.volumeBar.value = currentVolume;
   player.changeVolume();
 };
 
@@ -289,8 +318,10 @@ player.controls.play.addEventListener('click', () => {
 player.controls.prev.addEventListener('click', () => skipTo(DIRECTION.PREV));
 player.controls.next.addEventListener('click', () => skipTo(DIRECTION.NEXT));
 
-player.volume.addEventListener('click', setVolume);
+player.volumeBar.addEventListener('click', setVolume);
 
 audio.source.addEventListener('timeupdate', updateProgress);
+
+player.durationBar.addEventListener('click', setProgress);
 
 audio.source.addEventListener('ended', () => skipTo(DIRECTION.NEXT));

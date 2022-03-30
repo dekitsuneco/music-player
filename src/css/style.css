@@ -107,7 +107,7 @@ body {
 
   background-color: #fe8daa;
 
-  transition: all 0.3s linear;
+  transition: all 0.5s linear;
 }
 
 .music-player__audio-cover {
@@ -150,7 +150,7 @@ body {
   animation-play-state: paused;
 }
 .music-player--on .audio-cover__disk img {
-  animation-play-state: paused; /*running*/
+  animation-play-state: running;
 }
 
 @keyframes rotate {
