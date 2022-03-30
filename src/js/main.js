@@ -21,9 +21,23 @@
 
 /**
  * @type {Object}
+ * @param {HTMLAudioElement} source
+ * @param {HTMLElement} source
+ * @param {HTMLImageElement} source
+ */
+const audio = {
+  source: document.querySelector('.music-player__audio'),
+  title: document.querySelector('.audio-meta__title'),
+  cover: document.querySelector('.audio-cover__disk img'),
+};
+
+/**
+ * @type {Object}
  * @param {HTMLElement} container
  * @param {Object} container
  * @param {Controls} controls
+ * @param {HTMLMeterElement} volume
+ * @param {Function} changeVolume
  * @param {Boolean} isOn
  * @param {Function} changeStatus
  */
@@ -34,6 +48,10 @@ const player = {
     play: document.querySelector('.controls__play'),
     next: document.querySelector('.controls__next'),
   },
+  volume: document.querySelector('.music-player__audio-volume'),
+  changeVolume() {
+    audio.source.volume = this.volume.value / 100;
+  },
   isOn: false,
   changeStatus() {
     this.isOn = !this.isOn;
@@ -42,28 +60,16 @@ const player = {
     /**
      * @type {HTMLElement}
      */
-    const toggleButton = this.controls.play.querySelector('i.fas');
+    const toggleButtonIcon = this.controls.play.querySelector('i.fas');
 
     if (this.isOn) {
-      toggleButton.classList.remove('fa-play');
-      toggleButton.classList.add('fa-pause');
+      toggleButtonIcon.classList.remove('fa-play');
+      toggleButtonIcon.classList.add('fa-pause');
     } else {
-      toggleButton.classList.remove('fa-pause');
-      toggleButton.classList.add('fa-play');
+      toggleButtonIcon.classList.remove('fa-pause');
+      toggleButtonIcon.classList.add('fa-play');
     }
   },
-};
-
-/**
- * @type {Object}
- * @param {HTMLAudioElement} source
- * @param {HTMLElement} source
- * @param {HTMLImageElement} source
- */
-const audio = {
-  source: document.querySelector('.music-player__audio'),
-  title: document.querySelector('.audio-meta__title'),
-  cover: document.querySelector('.audio-cover__disk img'),
 };
 
 // 2. Define constants:
@@ -87,6 +93,14 @@ const widthScale = { min: 0, max: 100 };
  * @type {Scale}
  */
 const percentageScale = { min: 0, max: 100 };
+
+/**
+ * @type {Scale}
+ */
+const volumeWidthScale = {
+  min: 0,
+  max: player.volume.clientWidth,
+};
 
 /**
  * @type {Object}
@@ -147,9 +161,9 @@ const play = () => {
 const pause = () => {
   if (player.isOn) {
     player.changeStatus();
-
-    audio.source.pause();
   }
+
+  audio.source.pause();
 };
 
 /**
@@ -240,6 +254,29 @@ const updateProgress = ({ target: { duration, currentTime } }) => {
   );
 };
 
+/**
+ * @param {PointerEvent} e
+ * @returns {void}
+ */
+const setVolume = (e) => {
+  /**
+   * @type {Number}
+   */
+  const clickedPostiion = e.offsetX;
+
+  /**
+   * @type {Number}
+   */
+  const currentVolume = mapNumBetweenRanges(
+    volumeWidthScale,
+    percentageScale,
+    clickedPostiion,
+  );
+
+  player.volume.value = currentVolume;
+  player.changeVolume();
+};
+
 // 4. Set event listeners:
 player.controls.play.addEventListener('click', () => {
   if (player.isOn) {
@@ -251,6 +288,8 @@ player.controls.play.addEventListener('click', () => {
 
 player.controls.prev.addEventListener('click', () => skipTo(DIRECTION.PREV));
 player.controls.next.addEventListener('click', () => skipTo(DIRECTION.NEXT));
+
+player.volume.addEventListener('click', setVolume);
 
 audio.source.addEventListener('timeupdate', updateProgress);
 

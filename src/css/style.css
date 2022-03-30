@@ -163,11 +163,17 @@ body {
   }
 }
 
+.music-player__interactive-panel {
+  display: flex;
+  flex-direction: column;
+}
+
 .controls {
   display: flex;
   justify-content: space-around;
   gap: 55px;
 
+  margin-bottom: 7px;
   padding: 0 20px;
 }
 
@@ -188,4 +194,11 @@ body {
   color: #cdc2d0;
 
   font-size: 1.875rem;
+}
+
+.music-player__audio-volume {
+  align-self: center;
+
+  width: 80%;
+  height: 10px;
 }
