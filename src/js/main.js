@@ -20,47 +20,61 @@
  */
 
 /**
- * @type {HTMLElement}
+ * @type {Object}
+ * @param {HTMLElement} container
+ * @param {Object} container
+ * @param {Controls} controls
+ * @param {Boolean} isOn
+ * @param {Function} changeStatus
  */
-const player = document.querySelector('.music-player');
+const player = {
+  container: document.querySelector('.music-player'),
+  controls: {
+    prev: document.querySelector('.controls__previous'),
+    play: document.querySelector('.controls__play'),
+    next: document.querySelector('.controls__next'),
+  },
+  isOn: false,
+  changeStatus() {
+    this.isOn = !this.isOn;
+    this.container.classList.toggle('music-player--on');
 
-/**
- * @type {Controls}
- */
-const controls = {
-  prev: document.querySelector('.controls__previous'),
-  play: document.querySelector('.controls__play'),
-  next: document.querySelector('.controls__next'),
+    /**
+     * @type {HTMLElement}
+     */
+    const toggleButton = this.controls.play.querySelector('i.fas');
+
+    if (this.isOn) {
+      toggleButton.classList.remove('fa-play');
+      toggleButton.classList.add('fa-pause');
+    } else {
+      toggleButton.classList.remove('fa-pause');
+      toggleButton.classList.add('fa-play');
+    }
+  },
 };
 
 /**
- * @type {HTMLAudioElement}
+ * @type {Object}
+ * @param {HTMLAudioElement} source
+ * @param {HTMLElement} source
+ * @param {HTMLImageElement} source
  */
-const audio = document.querySelector('.music-player__audio');
-
-/**
- * @type {HTMLElement}
- */
-const progressBar = document.querySelector('.audio-meta__progress-bar');
-
-/**
- * @type {HTMLElement}
- */
-const songName = document.querySelector('.audio-meta__title');
-
-/**
- * @type {HTMLImageElement}
- */
-const songCover = document.querySelector('.audio-cover__disk img');
+const audio = {
+  source: document.querySelector('.music-player__audio'),
+  title: document.querySelector('.audio-meta__title'),
+  cover: document.querySelector('.audio-cover__disk img'),
+};
 
 // 2. Define constants:
 /**
- * @type {Progress}
+ * @constant {Object}
+ * @param {String} NEXT
+ * @param {String} PREV
  */
-const progress = {
-  min: 0,
-  current: 0,
-  max: 100,
+const DIRECTION = {
+  NEXT: 'next',
+  PREV: 'prev',
 };
 
 // TODO
@@ -69,127 +83,94 @@ const progress = {
  */
 const widthScale = { min: 0, max: 100 };
 
-// TODO
 /**
  * @type {Scale}
  */
-const durationScale = { min: 0, max: 60 };
+const percentageScale = { min: 0, max: 100 };
 
 /**
  * @type {Object}
- * @property {Array<string>} list
+ * @property {Array<string>} all
  * @property {number} indexOfCurrent
  */
 const playlist = {
-  all: ['Pinesoot', 'Pyrite'],
+  all: [
+    'Boiling_Blood',
+    'Eternal_flame',
+    'Immutable',
+    'Operation_dawnseeker',
+    'Pyrite',
+    'Radiant',
+    'Ready',
+    'Renegade',
+    'Speed_of_light',
+  ],
   indexOfCurrent: 0,
 };
 
-console.assert(playlist?.all instanceof Array, 'Song list is not array');
-console.assert(
-  playlist?.all.every((song) => typeof song === 'string'),
-  'Song list is not array of strings',
-);
-
 // 3. Define functions:
 /**
- *@todo Define a function to map the range of a song duration to a scale of 100
  *@todo Define a function to map the range of the bar width to a song duration
- *@todo Define a function to update the progress bar
  *@todo Define a function to update the progress bar on clicking
+ *@todo Define a function to control volume
  */
-// updateProgress(e): void
 // updateProgressManually(e): void
 /**
- *
  * @param {String} song
  * @returns {void}
  */
-const changeCurrentSongTo = (song) => {
+const changeAudioTo = (song) => {
+  /**
+   * @type {String}
+   */
   const pathToDir = `../src/assets/playlist/${song}`;
 
-  audio.src = `${pathToDir}/${song}.mp3`;
-  songCover.src = `${pathToDir}/${song}.jpg`;
-  songName.innerText = song;
-};
-
-/**
- * @param {String} status
- * @returns {void}
- */
-const changePlayControlStatusTo = (status) => {
-  /**
-   * @type {Boolean}
-   */
-  let isPlayerOn;
-
-  switch (status) {
-    case 'play':
-      if (!player.classList.contains('music-player--on')) {
-        player.classList.add('music-player--on');
-      }
-
-      isPlayerOn = true;
-      break;
-
-    case 'pause':
-      if (player.classList.contains('music-player--on')) {
-        player.classList.remove('music-player--on');
-      }
-
-      isPlayerOn = false;
-      break;
-
-    default:
-      break;
-  }
-
-  if (isPlayerOn) {
-    controls.play.querySelector('i.fas').classList.remove('fa-play');
-    controls.play.querySelector('i.fas').classList.add('fa-pause');
-  } else {
-    controls.play.querySelector('i.fas').classList.remove('fa-pause');
-    controls.play.querySelector('i.fas').classList.add('fa-play');
-  }
+  audio.source.src = `${pathToDir}/${song}.mp3`;
+  audio.cover.src = `${pathToDir}/${song}.jpg`;
+  audio.title.innerText = song;
 };
 
 /**
  * @returns {void}
  */
 const play = () => {
-  changePlayControlStatusTo('play');
+  if (!player.isOn) {
+    player.changeStatus();
+  }
 
-  audio.play();
+  audio.source.play();
 };
 
 /**
  * @returns {void}
  */
 const pause = () => {
-  changePlayControlStatusTo('pause');
+  if (player.isOn) {
+    player.changeStatus();
 
-  audio.pause();
+    audio.source.pause();
+  }
 };
 
 /**
  * @param {String} direction
  * @returns {void}
  */
-const moveIndexOfCurrentTo = (direction) => {
+const moveInPlaylistTo = (direction) => {
   switch (direction) {
-    case 'forward':
+    case DIRECTION.NEXT:
       if (playlist.indexOfCurrent === playlist.all.length - 1) {
         playlist.indexOfCurrent = 0;
       } else {
-        playlist.indexOfCurrent++;
+        playlist.indexOfCurrent += 1;
       }
       break;
 
-    case 'back':
+    case DIRECTION.PREV:
       if (playlist.indexOfCurrent === 0) {
         playlist.indexOfCurrent = playlist.all.length - 1;
       } else {
-        playlist.indexOfCurrent--;
+        playlist.indexOfCurrent -= 1;
       }
       break;
 
@@ -199,22 +180,13 @@ const moveIndexOfCurrentTo = (direction) => {
 };
 
 /**
+ * @param {String} direction
  * @returns {void}
  */
-const toPrevSong = () => {
-  moveIndexOfCurrentTo('back');
+const skipTo = (direction) => {
+  moveInPlaylistTo(direction);
 
-  changeCurrentSongTo(playlist.all[playlist.indexOfCurrent]);
-  play();
-};
-
-/**
- * @returns {void}
- */
-const toNextSong = () => {
-  moveIndexOfCurrentTo('forward');
-
-  changeCurrentSongTo(playlist.all[playlist.indexOfCurrent]);
+  changeAudioTo(playlist.all[playlist.indexOfCurrent]);
   play();
 };
 
@@ -238,24 +210,48 @@ const mapNumBetweenRanges = (fromRange, toRange, num) => {
     toRange.min + (sizeOfToRange / sizeOfFromRange) * (num - fromRange.min)
   );
 };
-console.assert(
-  typeof mapNumBetweenRanges(widthScale, durationScale, 30) === 'number',
-  'Return value of range mapping function is not array',
-);
+
+/**
+ * @param {Object} e
+ * @param {HTMLAudioElement} e.target
+ * @returns {void}
+ */
+const updateProgress = ({ target: { duration, currentTime } }) => {
+  /**
+   * @type {Scale}
+   */
+  const durationScale = {
+    min: 0,
+    max: duration,
+  };
+
+  /**
+   * @type {Number}
+   */
+  const current = mapNumBetweenRanges(
+    durationScale,
+    percentageScale,
+    currentTime,
+  );
+
+  document.documentElement.style.setProperty(
+    '--strength',
+    `${Math.round(current)}%`,
+  );
+};
 
 // 4. Set event listeners:
-controls.play.addEventListener('click', () => {
-  /**
-   * @type {Boolean}
-   */
-  const isPlayerOn = player.classList.contains('music-player--on');
-
-  if (isPlayerOn) {
+player.controls.play.addEventListener('click', () => {
+  if (player.isOn) {
     pause();
   } else {
     play();
   }
 });
 
-controls.prev.addEventListener('click', toPrevSong);
-controls.next.addEventListener('click', toNextSong);
+player.controls.prev.addEventListener('click', () => skipTo(DIRECTION.PREV));
+player.controls.next.addEventListener('click', () => skipTo(DIRECTION.NEXT));
+
+audio.source.addEventListener('timeupdate', updateProgress);
+
+audio.source.addEventListener('ended', () => skipTo(DIRECTION.NEXT));
