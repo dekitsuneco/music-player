@@ -1,7 +1,6 @@
 // @ts-check
 
 /**
- * @todo Normalize song names on display
  * @todo Make default song be set from javascript
  * @todo Move DOM caching into separate file
  * @todo Move range mapping into separate file as a module
@@ -313,6 +312,8 @@ const setVolume = (e) => {
 };
 
 // |@ 4. Set default actions and event listeners:
+changeAudioTo(playlist.all[playlist.indexOfCurrent]);
+
 player.controls.play.addEventListener('click', () => {
   if (player.isOn) {
     pause();
