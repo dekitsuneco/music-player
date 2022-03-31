@@ -20,7 +20,7 @@ export const audio = {
 };
 
 /**
- * @type {Object} player
+ * @type {Object}
  * @param {Boolean} isOn
  * @param {HTMLElement} container
  * @param {Object} container
